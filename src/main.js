@@ -14,6 +14,9 @@ import store from './store/index.js'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'
 
+// 引入百度编辑器
+import '../static/ueditor/ueditor.config'
+import '../static/ueditor/ueditor.all'
 
 Vue.use(ElementUI)
 

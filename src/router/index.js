@@ -12,6 +12,15 @@ import newList from '@/page/newList'
 import addNew from '@/page/addNew'
 // 引入修改新闻列表页面
 import modifyNew from '@/page/modifyNew' 
+// 引入新闻冻结页面
+import freezeNews from '@/page/freezeNews'
+// 引入管理人员页面
+import adminList from '@/page/adminList'
+// 引入管理人员操作页面
+import adminSet from '@/page/adminSet'
+// 引入管理人员页面
+import userList from '@/page/userList'
+
 
 Vue.use(Router)
 
@@ -38,6 +47,22 @@ export default new Router({
         path: '/modifyNew',
         name: 'modifyNew',
         component: modifyNew
+      },{
+        path: '/freezeNews',
+        name: 'freezeNews',
+        component: freezeNews
+      },{
+        path: '/adminList',
+        name: 'adminList',
+        component: adminList
+      }, {
+        path: '/adminSet',
+        name: 'adminSet',
+        component: adminSet
+      }, {
+        path: '/userList',
+        name: 'userList',
+        component: userList
       }]
     }
   ]

@@ -5,10 +5,10 @@
   			<el-col :span="12" :offset="4">
 		        <el-form :model="formData" :rules="rules" ref="formData" label-width="110px" class="demo-formData">
 					<el-form-item label="标题" prop="tit">
-						<el-input v-model="formData.tit"></el-input>
+						<el-input v-model="formData.tit" placeholder="请输入标题"></el-input>
 					</el-form-item>
-					<el-form-item label="作者" prop="name">
-						<el-input v-model="formData.name"></el-input>
+					<el-form-item label="作者" prop="name" >
+						<el-input v-model="formData.name" placeholder="请输入作者"></el-input>
 					</el-form-item>
 					<el-form-item label="时间" prop="time">
 						<el-date-picker
@@ -19,7 +19,7 @@
 					</el-form-item>
 
 					<el-form-item label="类型" prop="type">
-						<el-select v-model="listType" placeholder="请选择" @change="changeListType">
+						<el-select v-model="formData.listType" placeholder="请选择类型" @change="changeListType">
 							<el-option
 								v-for="item in listTypeArr"
 								:key="item.value"
@@ -27,7 +27,7 @@
 								:value="item.value">
 							</el-option>
 						</el-select>
-						<el-select v-model="type" placeholder="请选择">
+						<el-select v-model="formData.type" placeholder="请选择类型">
 							<el-option
 								v-for="item in typeArr"
 								:key="item.value"
@@ -38,14 +38,21 @@
 					</el-form-item>
 
 					<el-form-item label="封面" prop="pic">
-						<!-- <el-input v-model="formData.pic"></el-input> -->
 						<el-radio v-model="radio" label="1">外链</el-radio>
   						<el-radio v-model="radio" label="2">自主填写</el-radio>
-						  
+
+						<el-input v-model="formData.pic"></el-input>
+						<!-- <input type="file" name="" id=""> -->
 					</el-form-item>
 
 					<el-form-item label="内容" prop="tit">
+						<el-radio class="contentUrl outContent" v-model="radio2" label="1">外链</el-radio>
+  						<el-radio class="contentUrl inContent" v-model="radio2" label="2">自主填写</el-radio>
+			
 						<el-input v-model="formData.link"></el-input>
+						 <script id="container" name="content" type="text/plain">
+							这里写你的初始化内容
+						</script>
 					</el-form-item>
 				
 					<el-form-item class="button_submit">
@@ -61,7 +68,9 @@
     import headTop from '@/components/headTop'
     import {cityGuess, addShop, searchplace, foodCategory} from '@/api/getData'
     import {baseUrl, baseImgPath} from '@/config/env'
-    export default {
+
+	
+	export default {
     	data(){
     		return {
 				// 提交的数据
@@ -69,11 +78,13 @@
 					tit: '', // 标题
 					name: '', // 作者
 					time: '', // 时间
-					listType: '',
-					type: '',
-					pic: '',
+					listType: '', // 大类
+					type: '', // 小类
+					outPic: '', //封面图外链
+					intPic: '',// 封面图内链
+				    outContent: '',// 内容外链
+					intContent: ''// 内容内联
 				},
-				time: '',
 				// 校验规则
 		        rules: {
 					name: [
@@ -102,15 +113,16 @@
 				}],
 				// 小类型数据
 				typeArr: '',
-				listType: '',
-				type: '',
+				radio: '1',
+				radio2: '1'
     		}
     	},
     	components: {
     		headTop,
     	},
     	mounted(){
-    		// this.initData();
+			this.initUe();
+			// this.listenRadio();
     	},
     	methods: {
 			changeListType(value) {
@@ -182,6 +194,23 @@
 					}
 				});
 			},
+			// 初始化百度编辑器
+			initUe() {
+				var ue = UE.getEditor('container'),
+				    that = this;
+				// 监听百度编辑器的内容变化
+				ue.addListener('contentChange',function(editor){
+					var txt = ue.getContentTxt();
+					console.log(txt);
+					that.formData.intContent = txt;
+				})
+			},
+			// listenRadio() {
+			// 	var contentUrl = document.getElementsByClassName('contentUrl');
+			// 	contentUrl.click(function() {
+			// 		console.log(111);
+			// 	})
+			// }
 		}
     }
 </script>

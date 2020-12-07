@@ -23,19 +23,11 @@
         <el-table-column prop="" label="最后修改时间"> </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-              >修改</el-button>
-            <el-switch
-              v-model="value"
-              active-color="#13ce66"
-              inactive-color="#ff4949"
-            >
-            </el-switch>
             <el-button
               size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
-              >冻结</el-button
+              >解冻</el-button
             >
           </template>
         </el-table-column>
