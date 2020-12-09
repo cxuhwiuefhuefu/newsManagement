@@ -12,6 +12,11 @@ import newList from '@/page/newList'
 import addNew from '@/page/addNew'
 // 引入修改新闻列表页面
 import modifyNew from '@/page/modifyNew' 
+
+// 引入新闻列表操作页面
+import newListSet from '@/page/newListSet'
+
+
 // 引入新闻冻结页面
 import freezeNews from '@/page/freezeNews'
 // 引入管理人员页面
@@ -47,6 +52,10 @@ export default new Router({
         path: '/modifyNew',
         name: 'modifyNew',
         component: modifyNew
+      },{
+        path: '/newListSet',
+        name: 'newListSet',
+        component: newListSet
       },{
         path: '/freezeNews',
         name: 'freezeNews',

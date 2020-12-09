@@ -2,6 +2,9 @@
   <div>
     <head-top></head-top>
     <el-row style="margin-top: 20px">
+      <el-col :offset="2">
+        <el-button type="primary" @click="$router.back(-1)">返回</el-button>
+      </el-col>
       <el-col :span="12" :offset="4">
         <el-form
           :model="formData"
@@ -10,17 +13,25 @@
           label-width="110px"
           class="demo-formData"
         >
-          <el-form-item label="头像" prop="avatar">
-            <el-radio-group v-model="formData.avatarStatus" @change="avatarChange">
+
+          <el-form-item label="头像">
+            <el-radio-group
+              v-model="formData.avatarStatus"
+              @change="avatarChange"
+            >
               <el-radio label="头像链接"></el-radio>
               <el-radio label="本地上传"></el-radio>
             </el-radio-group>
+
             <div class="b1" v-if="formData.avatarStatus === '头像链接'">
-              <el-input
-                v-model="formData.outAvatar"
-                placeholder="请输入头像链接"
-              ></el-input>
+              <el-form-item prop="outAvatar">
+                <el-input
+                  v-model="formData.outAvatar"
+                  placeholder="请输入头像链接"
+                ></el-input>
+              </el-form-item>
             </div>
+
             <div class="b1" v-if="formData.avatarStatus === '本地上传'">
               <el-upload
                 class="avatar-uploader"
@@ -80,7 +91,10 @@
 </template>
 
 <script>
+// 引入导航栏头部组件
 import headTop from "@/components/headTop";
+// 引入上传图片组件
+import elImgUpload from "@/components/elImgUpload";
 import { cityGuess, addShop, searchplace, foodCategory } from "@/api/getData";
 import { baseUrl, baseImgPath } from "@/config/env";
 
@@ -93,10 +107,10 @@ export default {
         intAvatar: "", // 头像图片本地上传
         avatarStatus: "头像链接", // 头像状态 是选头像外链还是本地上传
         name: "", // 姓名
-        position: '', // 职务
+        position: "", // 职务
         admin: "", // 管理员权限
       },
-      // 管理员选项   
+      // 管理员选项
       options: [
         {
           value: "generalAdmin",
@@ -109,93 +123,95 @@ export default {
       ],
       // 校验规则
       rules: {
+        // outAvatar: [{     required: true,  message: "请上传头像", trigger: "blur" }],
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
         position: [{ required: true, message: "请输入职务", trigger: "blur" }],
-        admin: [{ required: true, message: "请选择管理员权限", trigger: "blur" }]
+        admin: [
+          { required: true, message: "请选择管理员权限", trigger: "blur" },
+        ],
       },
-      // 大类型
-      listTypeArr: [
-        {
-          value: "dblz",
-          label: "代表履职",
-        },
-        {
-          value: "rddt",
-          label: "人大动态",
-        },
-      ],
-      // 小类型数据
-      typeArr: "",
-      radio: "1",
-      radio2: "1",
     };
   },
   components: {
     headTop,
+    // elImgUpload,
   },
-  mounted() {},
+  mounted() {
+    this.getRouterParams();
+  },
   methods: {
-    avatarChange (val) {
-        console.log(val);
+    // 头像选择
+    avatarChange(val) {
+      console.log(1111);
+      if(val === '头像链接') {
+        this.formData.avatarStatus = '本地上传';
+      } 
+      if(val === '本地上传') {
+        this.formData.avatarStatus = '头像链接';
+      }
     },
     // 提交数据
     submitForm(formName) {
       this.$refs[formName].validate(async (valid) => {
         if (valid) {
-          Object.assign(
-            this.formData,
-            { activities: this.activities },
-            {
-              category: this.selectedCategory.join("/"),
-            }
-          );
-          try {
-            let result = await addShop(this.formData);
-            if (result.status == 1) {
-              this.$message({
-                type: "success",
-                message: "添加成功",
-              });
-              this.formData = {
-                name: "", //店铺名称
-                address: "", //地址
-                latitude: "",
-                longitude: "",
-                description: "", //介绍
-                phone: "",
-                promotion_info: "",
-                float_delivery_fee: 5, //运费
-                float_minimum_order_amount: 20, //起价
-                is_premium: true,
-                delivery_mode: true,
-                new: true,
-                bao: true,
-                zhun: true,
-                piao: true,
-                startTime: "",
-                endTime: "",
-                image_path: "",
-                business_license_image: "",
-                catering_service_license_image: "",
-              };
-              this.selectedCategory = ["快餐便当", "简餐"];
-              this.activities = [
-                {
-                  icon_name: "减",
-                  name: "满减优惠",
-                  description: "满30减5，满60减8",
-                },
-              ];
-            } else {
-              this.$message({
-                type: "error",
-                message: result.message,
-              });
-            }
-            console.log(result);
-          } catch (err) {
-            console.log(err);
+          // Object.assign(
+          //   this.formData,
+          //   { activities: this.activities },
+          //   {
+          //     category: this.selectedCategory.join("/"),
+          //   }
+          // );
+          // try {
+          //   let result = await addShop(this.formData);
+          //   if (result.status == 1) {
+          //     this.$message({
+          //       type: "success",
+          //       message: "添加成功",
+          //     });
+          //     this.formData = {
+          //       name: "", //店铺名称
+          //       address: "", //地址
+          //       latitude: "",
+          //       longitude: "",
+          //       description: "", //介绍
+          //       phone: "",
+          //       promotion_info: "",
+          //       float_delivery_fee: 5, //运费
+          //       float_minimum_order_amount: 20, //起价
+          //       is_premium: true,
+          //       delivery_mode: true,
+          //       new: true,
+          //       bao: true,
+          //       zhun: true,
+          //       piao: true,
+          //       startTime: "",
+          //       endTime: "",
+          //       image_path: "",
+          //       business_license_image: "",
+          //       catering_service_license_image: "",
+          //     };
+          //     this.selectedCategory = ["快餐便当", "简餐"];
+          //     this.activities = [
+          //       {
+          //         icon_name: "减",
+          //         name: "满减优惠",
+          //         description: "满30减5，满60减8",
+          //       },
+          //     ];
+          //   } else {
+          //     this.$message({
+          //       type: "error",
+          //       message: result.message,
+          //     });
+          //   }
+          //   console.log(result);
+          // } catch (err) {
+          //   console.log(err);
+          // }
+          if (!this.formData.outAvatar && !this.formData.intAvatar) {
+            this.$message("请填写头像链接或本地上传头像");
           }
+          console.log("提交成功了");
         } else {
           this.$notify.error({
             title: "错误",
@@ -223,6 +239,32 @@ export default {
         _this.formData.intAvatar = e.target.result; // 将图片路径赋值给src
       };
       reader.readAsDataURL(file);
+    },
+    // 获取路由的传参参数
+    getRouterParams(type, row) {
+      var type = this.$route.params.type;
+      if(type === '修改'){
+        console.log(this.$route.params.row)
+        this.formData = this.$route.params.row;
+        
+        // this.formData.avatarStatus = '头像链接'
+        // this.formData.outAvatar = this.$route.params.row.avatar;
+
+        this.formData.avatarStatus = '本地上传'
+        this.formData.intAvatar = this.$route.params.row.avatar;
+
+        // var src = this.$route.params.row.avatar;
+        // if(src.indexOf('data:image/jpg;base64,')>-1){
+        //     // base64 图片操作
+        //     // this.formData.avatarStatus = '本地上传'
+        //     // this.formData.intAvatar = this.$route.params.row.avatar;
+        // }else{
+        //     //path 图片操作
+
+        // }
+
+        console.log('this.formData', this.formData);
+      }
     },
   },
 };

@@ -1,6 +1,7 @@
 <template>
   <div class="fillcontain">
     <head-top></head-top>
+     <el-button type="primary">添加</el-button> 
     <div class="table_container">
       <el-table :data="tableData" style="width: 100%">
         <el-table-column prop="id" label="序号"> </el-table-column>
