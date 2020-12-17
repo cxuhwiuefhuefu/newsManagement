@@ -13,7 +13,7 @@
           label-width="110px"
           class="demo-formData"
         >
-          <el-form-item label="头像">
+          <el-form-item label="封面">
             <el-radio-group v-model="formData.isPicLink">
               <el-radio :label="1">外链</el-radio>
               <el-radio :label="0">非外链</el-radio>
@@ -53,22 +53,6 @@
               placeholder="请输入职务"
             ></el-input>
           </el-form-item>
-          <el-form-item label="管理员权限" prop="admin">
-            <template>
-              <el-select
-                v-model="formData.admin"
-                placeholder="请选择管理人员权限"
-              >
-                <el-option
-                  v-for="item in options"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                >
-                </el-option>
-              </el-select>
-            </template>
-          </el-form-item>
 
           <el-form-item class="button_submit">
             <el-button type="primary" @click="submitForm('formData')"
@@ -84,62 +68,28 @@
 <script>
 // 引入导航栏头部组件
 import headTop from "@/components/headTop";
-// 引入上传图片组件
-import elImgUpload from "@/components/elImgUpload";
-// import { cityGuess, addShop, searchplace, foodCategory } from "@/api/getData";
 import { baseUrl, baseImgPath } from "@/config/env";
 
 export default {
   data() {
     return {
       // 提交的数据
-      formData: {
-        isPicLink: 1,
-        pic: "",
-        name: "", // 姓名
-        position: "", // 职务
-        admin: "" // 管理员权限
-      },
-      // 管理员选项
-      options: [
-        {
-          value: "generalAdmin",
-          label: "普通管理员"
-        },
-        {
-          value: "superAdmin",
-          label: "超级管理员"
-        }
-      ],
+      formData: {},
       // 校验规则
       rules: {
         pic: [{ required: true, message: "请上传头像", trigger: "blur" }],
         name: [{ required: true, message: "请输入姓名", trigger: "blur" }],
-        position: [{ required: true, message: "请输入职务", trigger: "blur" }],
-        admin: [
-          { required: true, message: "请选择管理员权限", trigger: "blur" }
-        ]
+        position: [{ required: true, message: "请输入职务", trigger: "blur" }]
       }
     };
   },
   components: {
     headTop
-    // elImgUpload,
   },
   mounted() {
     this.getRouterParams();
   },
   methods: {
-    // 头像选择
-    avatarChange(val) {
-      console.log(1111);
-      if (val === "头像链接") {
-        this.formData.avatarStatus = "本地上传";
-      }
-      if (val === "本地上传") {
-        this.formData.avatarStatus = "头像链接";
-      }
-    },
     // 提交数据
     submitForm(formName) {
       this.$refs[formName].validate(async valid => {
@@ -212,7 +162,6 @@ export default {
         }
       });
     },
-
     // 图片上传之前
     beforeAvatarUpload(file) {
       return false; // 屏蔽了action的默认上传
@@ -233,27 +182,20 @@ export default {
     // 获取路由的传参参数
     getRouterParams(type, row) {
       var type = this.$route.params.type;
+      var that = this;
       if (type === "修改") {
-        console.log(this.$route.params.row);
-        this.formData = this.$route.params.row;
-
-        // this.formData.avatarStatus = '头像链接'
-        // this.formData.outAvatar = this.$route.params.row.avatar;
-
-        this.formData.avatarStatus = "本地上传";
-        this.formData.intAvatar = this.$route.params.row.avatar;
-
-        // var src = this.$route.params.row.avatar;
-        // if(src.indexOf('data:image/jpg;base64,')>-1){
-        //     // base64 图片操作
-        //     // this.formData.avatarStatus = '本地上传'
-        //     // this.formData.intAvatar = this.$route.params.row.avatar;
-        // }else{
-        //     //path 图片操作
-
-        // }
-
-        console.log("this.formData", this.formData);
+        that.$nextTick(function() {
+          that.formData = that.$route.params.row;
+        });
+      } else if (type === "添加") {
+        that.$nextTick(function() {
+          that.formData = {
+            pic: "", // 图片链接
+            isPicLink: 1, //
+            name: "", // 姓名
+            position: "" // 职务
+          };
+        });
       }
     }
   }

@@ -9,7 +9,7 @@
 					<el-form-item prop="username">
 						<el-input v-model="loginForm.username" placeholder="用户名"><span>dsfsf</span></el-input>
 					</el-form-item>
-					<el-form-item prop="password">
+					<el-form-item prop="password">	
 						<el-input type="password" placeholder="密码" v-model="loginForm.password"></el-input>
 					</el-form-item>
 					<el-form-item>
@@ -31,10 +31,12 @@
 	export default {
 	    data(){
 			return {
+				// 登录信息
 				loginForm: {
-					username: '',
-					password: '',
+					username: '', // 用户名
+					password: '', // 密码
 				},
+				// 规则校验
 				rules: {
 					username: [
 			            { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -60,7 +62,7 @@
 			async submitForm(formName) {
 				this.$refs[formName].validate(async (valid) => {
 					console.log(11111);
-					this.$router.push({'path': '/manage'});
+					this.$router.push({'path': '/newList/dblz'});
 					
 					// if (valid) {
 					// 	const res = await login({user_name: this.loginForm.username, password: this.loginForm.password})
@@ -95,7 +97,7 @@
                         type: 'success',
                         message: '检测到您之前登录过，将自动登录'
                     });
-					this.$router.push('manage')
+					this.$router.push({'path': '/newList/dblz'});
 				}
 			}
 		}

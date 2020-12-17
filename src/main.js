@@ -18,6 +18,15 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '../static/ueditor/ueditor.config'
 import '../static/ueditor/ueditor.all'
 
+//此部分引入的是我们所编写的mockjs文档
+import './mock'
+
+// 引入axios
+import axios from 'axios'
+import VueAxios from 'vue-axios'
+Vue.use(VueAxios, axios)
+
+
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false

@@ -48,7 +48,8 @@
 
 <script>
 import headTop from "../components/headTop";
-import { adminList, adminCount } from "@/api/getData";
+// import { adminList, adminCount } from "@/api/getData";
+import { getNewList } from "@/api/getData";
 export default {
   data() {
     return {
@@ -84,6 +85,10 @@ export default {
       //     console.log('获取数据失败', err);
       // }
 
+      // var data = getNewList();  
+      // console.log(data);
+
+
       this.count = 10;
       this.getAdmin();
     },
@@ -96,28 +101,28 @@ export default {
       this.getAdmin();
     },
     async getAdmin() {
-      // try{
-      //     const res = await adminList({offset: this.offset, limit: this.limit});
+      try{
+          const res = await adminList({offset: this.offset, limit: this.limit});
 
-      //     console.log('adminList', res);
+          console.log('adminList', res);
 
-      //     if (res.status == 1) {
-      //     	this.tableData = [];
-      //     	res.data.forEach(item => {
-      //     		const tableItem = {
-      //     			create_time: item.create_time,
-      // 		        user_name: item.user_name,
-      // 		        admin: item.admin,
-      //                 city: item.city,
-      //     		}
-      //     		this.tableData.push(tableItem)
-      //     	})
-      //     }else{
-      //     	throw new Error(res.message)
-      //     }
-      // }catch(err){
-      //     console.log('获取数据失败', err);
-      // }
+          if (res.status == 1) {
+          	this.tableData = [];
+          	res.data.forEach(item => {
+          		const tableItem = {
+          			create_time: item.create_time,
+      		        user_name: item.user_name,
+      		        admin: item.admin,
+                      city: item.city,
+          		}
+          		this.tableData.push(tableItem)
+          	})
+          }else{
+          	throw new Error(res.message)
+          }
+      }catch(err){
+          console.log('获取数据失败', err);
+      }
 
       this.tableData = [
         {

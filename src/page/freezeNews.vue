@@ -2,7 +2,7 @@
   <div class="fillcontain">
     <head-top></head-top>
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%">
+      <el-table :data="tableData" style="width: 100%" border>
         <el-table-column prop="id" label="序号"> </el-table-column>
         <el-table-column prop="pic" label="图片">
           <template slot-scope="scope">
@@ -20,7 +20,8 @@
         </el-table-column>
         <el-table-column prop="type" label="类型"></el-table-column>
         <el-table-column prop="time" label="添加时间"> </el-table-column>
-        <el-table-column prop="" label="最后修改时间"> </el-table-column>
+        <el-table-column prop="isTop" label="是否置顶"> </el-table-column>
+        <el-table-column prop="online" label="状态"> </el-table-column>
         <el-table-column label="操作" width="200">
           <template slot-scope="scope">
             <el-button
@@ -51,7 +52,7 @@
 
 <script>
 import headTop from "../components/headTop";
-import { adminList, adminCount } from "@/api/getData";
+import { getFrezzNewList } from "@/api/getData";
 export default {
   data() {
     return {
@@ -62,6 +63,35 @@ export default {
       count: 0,
       currentPage: 1,
       value: "", // 按钮值
+
+       isTopArr: ["非置顶", "置顶"],
+      isOnlineArr: {
+        off: "下线",
+        on: "上线"
+      },
+      isContraryOnlineArr: {
+        下线: "off",
+        上线: "on"
+      },
+      // isOnlineArr
+      typeArr: {
+        dbysh: "代表议事会",
+        scdy: "视察调研",
+        dbfc: "代表风采",
+        dhqj: "大会期间",
+        bhqj: "闭会期间",
+        bljy: "办理建议",
+        xwsd: "新闻速递",
+        jygg: "决议公告",
+        rsrm: "人事任免",
+        gzjx: "工作简讯",
+        mtgz: "媒体关注"
+      },
+      handleStatusArr: {
+        on: true,
+        off: false
+      },
+      
     };
   },
   components: {
@@ -72,37 +102,29 @@ export default {
   },
   methods: {
     async initData() {
-      // try{
-      //     const countData = await adminCount();
-      //     if (countData.status == 1) {
-      //         this.count = countData.count;
-      //     }else{
-      //         throw new Error('获取数据失败');
-      //     }
-      //     this.getAdmin();
-      // }catch(err){
-      //     console.log('获取数据失败', err);
-      // }
+        this.getFrezzNewList(0)
+    },
+    // 请求获取新闻数据并填充
+    getFrezzNewList(start) {
+      var _this = this;
+      try {
+        getFrezzNewList()
+          .then(function(response) {
+            response.forEach(ele => {
+              ele.type = _this.typeArr[ele.type];
+              ele.isTop = _this.isTopArr[ele.isTop];
+              ele.online = _this.isOnlineArr[ele.online];
+            });
 
-      // 表格数据
-      this.tableData = [
-        {
-          id: 0,
-          pic: "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png",
-          tit: "哈哈",
-          link: 'https://www.baidu.com/',
-          type: "代表风采",
-          time: "2020-11-1",
-        },
-        {
-          id: 1,
-          pic: "https://www.baidu.com/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png",
-          tit: "哈哈22",
-          link: 'https://www.baidu.com/',
-          type: "代表履职",
-          time: "2020-11-2",
-        },
-      ];
+            console.log("response", response);
+            _this.tableData = response;
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+      } catch (err) {
+        console.log("获取数据失败", err);
+      }
     },
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);

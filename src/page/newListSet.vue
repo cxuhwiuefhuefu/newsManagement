@@ -16,12 +16,6 @@
               placeholder="请输入标题"
             ></el-input>
           </el-form-item>
-          <el-form-item label="作者" prop="name">
-            <el-input
-              v-model="formData.name"
-              placeholder="请输入作者"
-            ></el-input>
-          </el-form-item>
           <el-form-item label="时间" prop="time">
             <el-date-picker
               v-model="formData.time"
@@ -33,7 +27,7 @@
 
           <el-form-item label="类型" prop="type">
             <el-select
-              v-model="formData.listType"
+              v-model="formData.list_type"
               placeholder="请选择类型"
               @change="changeListType"
             >
@@ -45,6 +39,7 @@
               >
               </el-option>
             </el-select>
+
             <el-select v-model="formData.type" placeholder="请选择类型">
               <el-option
                 v-for="item in typeArr"
@@ -56,36 +51,60 @@
             </el-select>
           </el-form-item>
 
+          <el-form-item label="是否置顶" prop="isTop">
+            <el-select v-model="formData.isTop" placeholder="请选择">
+              <el-option
+                v-for="item in isTopArr"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="封面">
-            <el-radio-group
-              v-model="formData.picStatus"
-              @change="picChange"
-            >
-              <el-radio label="封面外链"></el-radio>
-              <el-radio label="本地上传"></el-radio>  
+            <el-radio-group v-model="formData.isPicLink">
+              <el-radio :label="1">外链</el-radio>
+              <el-radio :label="0">非外链</el-radio>
             </el-radio-group>
 
-            <div class="b1" v-if="formData.picStatus === '封面链接'">
+            <div class="b1" v-if="formData.isPicLink === 1">
               <el-form-item prop="outAvatar">
                 <el-input
-                  v-model="formData.outPic"
+                  v-model="formData.pic"
                   placeholder="请输入封面链接"
                 ></el-input>
               </el-form-item>
-            </div>  
+            </div>
+            <div class="b1" v-if="formData.isPicLink === 0">
+              <el-upload
+                class="avatar-uploader"
+                action="123"
+                :show-file-list="false"
+                :on-change="onchange"
+                :before-upload="beforeAvatarUpload"
+              >
+                <img v-if="formData.pic" :src="formData.pic" class="avatar" />
+                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+              </el-upload>
+            </div>
           </el-form-item>
 
           <el-form-item label="内容" prop="tit">
-            <el-radio class="contentUrl outContent" v-model="radio2" label="1"
-              >外链</el-radio
-            >
-            <el-radio class="contentUrl inContent" v-model="radio2" label="2"
-              >自主填写</el-radio
-            >
-            <el-input v-model="formData.link"></el-input>
-            <script id="container" name="content" type="text/plain">
-              这里写你的初始化内容
-            </script>
+            <el-radio-group v-model="formData.isLink">
+              <el-radio :label="1">外链</el-radio>
+              <el-radio :label="0">非外链</el-radio>
+            </el-radio-group>
+
+            <div class="b1" v-if="formData.isLink === 1">
+              <el-input v-model="formData.link"></el-input>
+            </div>
+            <div class="b1" v-if="formData.isLink === 0">
+              <script id="container" name="content" type="text/plain">
+                这里写你的初始化内容
+              </script>
+            </div>
           </el-form-item>
 
           <el-form-item class="button_submit">
@@ -101,7 +120,7 @@
 
 <script>
 import headTop from "@/components/headTop";
-import { cityGuess, addShop, searchplace, foodCategory } from "@/api/getData";
+// import { cityGuess, addShop, searchplace, foodCategory } from "@/api/getData";
 import { baseUrl, baseImgPath } from "@/config/env";
 
 export default {
@@ -110,82 +129,102 @@ export default {
       // 提交的数据
       formData: {
         tit: "", // 标题
-        name: "", // 作者
         time: "", // 时间
-        listType: "", // 大类
+        list_type: "", // 大类
         type: "", // 小类
-        picStatus: '封面外链', // 封面上传类型选择 
-        outPic: "", //封面图外链
-        intPic: "", // 封面图内链
-        outContent: "", // 内容外链
-        intContent: "", // 内容内联
+        isTop: "", // 是否置顶
+        isPicLink: 1, // 封面是否外链
+        pic: "", // 封面链接
+        isLink: 1, // 文章内容是否外链
+        content: "" // 文章内容链接
       },
       // 校验规则
       rules: {
         tit: [{ required: true, message: "请输入标题", trigger: "blur" }],
         name: [{ required: true, message: "请输入作者", trigger: "blur" }],
         type: [{ required: true, message: "请输入类型", trigger: "blur" }],
+        isTop: [{ required: true, message: "请选择是否置顶", trigger: "blur" }],
         pic: [{ required: true, message: "请输入图片链接", trigger: "blur" }],
-        time: [{ required: true, message: "请输入时间", trigger: "blur" }],
+        time: [{ required: true, message: "请输入时间", trigger: "blur" }]
       },
       // 大类型
       listTypeArr: [
         {
           value: "dblz",
-          label: "代表履职",
+          label: "代表履职"
         },
         {
           value: "rddt",
-          label: "人大动态",
-        },
+          label: "人大动态"
+        }
       ],
       // 小类型数据
       typeArr: "",
       radio: "1",
       radio2: "1",
+      isTopArr: [
+        {
+          value: 0,
+          label: "非置顶"
+        },
+        {
+          value: 1,
+          label: "置顶"
+        }
+      ]
     };
   },
   components: {
-    headTop,
+    headTop
   },
   mounted() {
+    this.getRouterParams();
     this.initUe();
   },
   methods: {
+    // 获取路由的传参参数
+    getRouterParams(type, row) {
+      var type = this.$route.params.type;
+      console.log(" type", type);
+      if (type === "修改") {
+        console.log(this.$route.params.row);
+        this.formData = this.$route.params.row;
+
+        this.formData.avatarStatus = "本地上传";
+        this.formData.intAvatar = this.$route.params.row.avatar;
+
+        console.log("this.formData", this.formData);
+      }
+    },
     changeListType(value) {
       if (value === "dblz") {
         this.typeArr = [
           { value: "scdy", label: "视察调研" },
-          { value: "dbfc", label: "代表风采" },
+          { value: "dbfc", label: "代表风采" }
         ];
       } else if (value === "rddt") {
         this.typeArr = [
           { value: "ywsd", label: "要闻速递" },
-          { value: "jygg", label: "决议公告" },
+          { value: "jygg", label: "决议公告" }
         ];
       }
     },
-    // 图片类型上传选择
-    picChange() {
-
-    },
     // 提交数据
     submitForm(formName) {
-      this.$refs[formName].validate(async (valid) => {
+      this.$refs[formName].validate(async valid => {
         if (valid) {
-        //   Object.assign(
-        //     this.formData,
-        //     { activities: this.activities },
-        //     {
-        //       category: this.selectedCategory.join("/"),
-        //     }
-        //   );
-         
+          //   Object.assign(
+          //     this.formData,
+          //     { activities: this.activities },
+          //     {
+          //       category: this.selectedCategory.join("/"),
+          //     }
+          //   );
         } else {
           this.$notify.error({
             title: "错误",
             message: "请检查输入是否正确",
-            offset: 100,
+            offset: 100
           });
           return false;
         }
@@ -196,7 +235,7 @@ export default {
       var ue = UE.getEditor("container"),
         that = this;
       // 监听百度编辑器的内容变化
-      ue.addListener("contentChange", function (editor) {
+      ue.addListener("contentChange", function(editor) {
         var txt = ue.getContentTxt();
         console.log(txt);
         that.formData.intContent = txt;
@@ -208,7 +247,26 @@ export default {
     // 		console.log(111);
     // 	})
     // }
-  },
+
+    // 图片上传之前
+    beforeAvatarUpload(file) {
+      return false; // 屏蔽了action的默认上传
+    },
+    // 当上传图片后，调用onchange方法，获取图片本地路径
+    onchange(file, fileList) {
+      var _this = this;
+      var event = event || window.event;
+      console.log("event.target", event.target.files[0]);
+      var file = event.target.files[0];
+      var reader = new FileReader();
+      //转base64
+      reader.onload = function(e) {
+        console.log("e.target.result", e.target.result);
+        _this.formData.pic = e.target.result; // 将图片路径赋值给src
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 };
 </script>
 
