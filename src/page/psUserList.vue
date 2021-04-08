@@ -56,25 +56,19 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="Pagination" style="text-align: left; margin-top: 10px">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-size="20"
-          layout="total, prev, pager, next"
-          :total="count"
-        >
-        </el-pagination>
-      </div>
+      
+      
+      <pagination @handlePage="handlePage"></pagination>
     </div>
   </div>
 </template>
 
 <script>
 import headTop from "../components/headTop";
-// import { adminList, adminCount } from "@/api/getData";
+// 引入分页组件
+import pagination from "@/components/pagination";
 import { getNewList } from "@/api/getData";
+
 export default {
   data() {
     return {
@@ -87,7 +81,8 @@ export default {
     };
   },
   components: {
-    headTop
+    headTop,
+    pagination
   },
   created() {
     this.initData();
@@ -113,14 +108,6 @@ export default {
       // console.log(data);
 
       this.count = 10;
-      this.getAdmin();
-    },
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val;
-      this.offset = (val - 1) * this.limit;
       this.getAdmin();
     },
     async getAdmin() {
@@ -173,6 +160,12 @@ export default {
           params: { type: "修改", row }
         });
       }
+    },
+    // 点击触发页数触发的函数
+    handlePage(value) {
+      console.log(value);
+      this.start = value * 30;
+      this.getNewsData(this.list_type, this.type, this.start);
     }
   }
 };

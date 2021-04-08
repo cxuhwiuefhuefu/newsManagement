@@ -37,6 +37,9 @@ import blUserList from '@/page/blUserList'
 // 引入用户人员操作页面
 import userListSet from '@/page/userListSet'
 
+// 引入测试页面
+import test from '@/page/test'
+
 Vue.use(Router)
 
 export default new Router({
@@ -103,6 +106,10 @@ export default new Router({
           path: '/userListSet',
           name: 'userListSet',
           component: userListSet
+        }, {
+          path: '/test',
+          name: 'test',
+          component: test
         }
       ]
     }

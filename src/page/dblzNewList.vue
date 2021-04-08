@@ -21,7 +21,12 @@
     </el-row>
 
     <div class="table_container">
-      <el-table :data="tableData" style="width: 100%" border :row-class-name="tableRowClassName">
+      <el-table
+        :data="tableData"
+        style="width: 100%"
+        border
+        :row-class-name="tableRowClassName"
+      >
         <el-table-column prop="id" label="序号"> </el-table-column>
         <el-table-column prop="pic" label="图片">
           <template slot-scope="scope">
@@ -101,6 +106,7 @@ export default {
         rddt: "人大动态"
       },
       tableData: [], // 列表数据
+
       isTopArr: ["非置顶", "置顶"],
       isOnlineArr: {
         off: "下线",
@@ -175,6 +181,7 @@ export default {
       try {
         getNewList({ list_type, type, start })
           .then(function(response) {
+            console.log("response", response);
             response.forEach(ele => {
               ele.type = _this.typeArr[ele.type];
               ele.isTop = _this.isTopArr[ele.isTop];
@@ -220,7 +227,6 @@ export default {
           source: this.list_type,
           isFrezz: row.isFrezz
         };
-        // console.log(params);
       }
     },
     // 新闻类型切换
@@ -230,13 +236,15 @@ export default {
     },
     // 点击触发页数触发的函数
     handlePage(value) {
-      this.start = value;
+      console.log(value);
+      this.start = value * 30;
       this.getNewsData(this.list_type, this.type, this.start);
     },
-    tableRowClassName({row}){
+    // 是否冻结状态显示
+    tableRowClassName({ row }) {
       console.log(row.isFrezz);
-      if(row.isFrezz === 1){
-        return 'warning-row';
+      if (row.isFrezz === 1) {
+        return "warning-row";
       }
     }
   }
@@ -249,14 +257,13 @@ export default {
   padding: 20px;
 }
 
-
 .warning-row {
-    background: #EEEEEE !important;
+  background: #eeeeee !important;
 }
 
 /* 冻结的行数不能操作 */
-.warning-row:hover>td {
-    pointer-events: none;
+.warning-row:hover > td {
+  pointer-events: none;
 }
 </style>
 

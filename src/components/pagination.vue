@@ -11,17 +11,9 @@
 
 <script>
 export default {
-    mounted() {
-        console.log(111111);
-    },
-    data() {
-        return {
-            count: ''
-        }
-    },
     methods: {
         handleCurrentChange(value) {
-            var start = value * 30;
+            var start = value;
             this.$emit('handlePage', start);    
         },
     },
