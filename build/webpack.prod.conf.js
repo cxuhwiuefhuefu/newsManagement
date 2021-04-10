@@ -9,7 +9,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 const env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
@@ -30,6 +31,30 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
+    new ParallelUglifyPlugin({
+        uglifyJS: {
+            output: {
+                // 是否输出可读性较好的代码，即可保留空格和制表符，默认为输出，为了达到更好的压缩效果，可以设置为false
+                beautify: false,
+                // 是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
+                comments: false
+            },
+            compress: {
+                // 是否在UglifyJS删除没有用到的代码时输出警告信息，默认为输出，可以设置为false关闭这些作用不大的警告
+                warning: false,
+                // 是否删除代码中所有的console.log语句 默认为不删除 开启后 会删除所有的console语句
+                drop_console: true,
+                // 是否内嵌虽然已经定义了，但是只用到一次的变量 比如将var i = 1; y = x; 转换成y = 5;默认为不转换，为了到达更好的压缩效果，可以设置为false
+                collapse_vars: true,
+                // 是否提取出现了多次但是定义成变量去引用的静态值，比如将x = 'xxx'; y = 'xxx' 转换成var a = 'xxxx'; x = a; y = a;默认为不转换，为了达到更好的压缩效果，可以设置为false
+                reduce_vars: true
+            }
+        }
+    }),
+    new webpack.DllReferencePlugin({
+        conetxt: __dirname,
+        manifest: require('../main-manifest.json')
+    }),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
       'process.env': env
