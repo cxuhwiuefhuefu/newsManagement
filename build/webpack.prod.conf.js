@@ -15,12 +15,13 @@ const HappyPack = require('happypack');
 const { cachedDataVersionTag } = require('v8')
 const happypack = require('happypack')
 const happyThreadPool = HappyPack.ThreadPool({size: 5}); // 构建共享进程池 包括5个进程
+
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const { Stats } = require('webpack')
 
-var Dashboard = require('webpack-dashboard');
-var DashboardPlugin = require('webpack-dashboard/plugin');
-var dashboard = new Dashboard();
+// var Dashboard = require('webpack-dashboard');
+// var DashboardPlugin = require('webpack-dashboard/plugin');
+// var dashboard = new Dashboard();
 
 
 
@@ -43,7 +44,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
-      new DashboardPlugin(dashboard.setData),
+    //   new DashboardPlugin(dashboard.setData),
       new BundleAnalyzerPlugin({
           analyzerMode: "server",
           analyzerHost: "127.0.0.1",
@@ -72,7 +73,10 @@ const webpackConfig = merge(baseWebpackConfig, {
     new HappyPack({
         // 用id来标识 happypack处理哪类文件
         id: 'css',
-        loaders: ['css-loader', 'postcss-loader', 'sass-loader'],
+        loaders: [
+            {loader: 'css-loader'}, 
+            {loader: 'less-loader'}, 
+            {loader: 'style-loader'}],
         // 共享进程池
         threadPool: happyThreadPool,
         // 允许happyPack输出日志

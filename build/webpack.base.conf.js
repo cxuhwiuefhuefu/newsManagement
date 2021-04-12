@@ -33,6 +33,7 @@ module.exports = {
     }
   },
   module: {
+     noParse: /jquery|lodash/, // 正则表达式
     rules: [
       {
         test: /\.vue$/,
@@ -42,7 +43,7 @@ module.exports = {
       {
         test: /\.js$/,
         // loader: 'babel-loader',
-        use: ['cache-loader', 'babel-loader'],
+        use: ['cache-loader', 'happypack/loader?id=happybabel'],
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')],
         exclude: path.resolve(__dirname,' ./node_modules'),//排除node_modules目录下的文件
       },
@@ -79,7 +80,7 @@ module.exports = {
       {
         test: /\.less$/,
         // loader: "style-loader!css-loader!less-loader",
-        use: ["cache-loader", "style-loader", "css-loader", "less-loader"],
+        use: ["cache-loader", "happypack/loader?id=css"],
         exclude: path.resolve(__dirname,' ./node_modules'),//排除node_modules目录下的文件
       },
     ]

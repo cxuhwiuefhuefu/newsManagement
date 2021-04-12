@@ -17,6 +17,9 @@
     "dependencies": {
         "axios": "^0.21.0",
         "element-ui": "^2.13.2",
+        "jquery": "^3.6.0",
+        "lodash": "^4.17.21",
+        "style-loader": "^2.0.0",
         "vue": "^2.5.2",
         "vue-axios": "^3.2.0",
         "vue-router": "^3.0",
