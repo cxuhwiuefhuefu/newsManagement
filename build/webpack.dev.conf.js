@@ -13,6 +13,8 @@ const portfinder = require('portfinder')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
+const Jarvis = require("webpack-jarvis");
+
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
@@ -45,6 +47,10 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
+       new Jarvis({
+    watchOnly: false,
+    port: 3001 // optional: set a port
+  }),
         new webpack.DllReferencePlugin({
           conetxt: __dirname,
           manifest: require('../main-manifest.json')

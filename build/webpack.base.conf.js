@@ -41,13 +41,15 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        // loader: 'babel-loader',
+        use: ['cache-loader', 'babel-loader'],
         include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')],
         exclude: path.resolve(__dirname,' ./node_modules'),//排除node_modules目录下的文件
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
+        // use: ['cache-loader', 'url-loader'],
         options: {
           limit: 10000,
           name: utils.assetsPath('img/[name].[hash:7].[ext]')
@@ -66,6 +68,7 @@ module.exports = {
       {
         test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
         loader: 'url-loader',
+        // use: ["cache-loader", "url-loader"],
         options: {
           limit: 10000,
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
@@ -75,7 +78,8 @@ module.exports = {
       // 解析less
       {
         test: /\.less$/,
-        loader: "style-loader!css-loader!less-loader",
+        // loader: "style-loader!css-loader!less-loader",
+        use: ["cache-loader", "style-loader", "css-loader", "less-loader"],
         exclude: path.resolve(__dirname,' ./node_modules'),//排除node_modules目录下的文件
       },
     ]
