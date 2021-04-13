@@ -50,10 +50,9 @@ module.exports = {
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         loader: 'url-loader',
-        // use: ['cache-loader', 'url-loader'],
         options: {
-          limit: 10000,
-          name: utils.assetsPath('img/[name].[hash:7].[ext]')
+          limit: 10 * 1024,
+          name: utils.assetsPath('img/[name].[hash:7].[ext]'),
         },
         exclude: path.resolve(__dirname,' ./node_modules'),//排除node_modules目录下的文件
       },

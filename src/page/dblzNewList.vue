@@ -1,6 +1,8 @@
 <template>
   <div class="fillcontain">
     <head-top></head-top>
+        11
+    <img src="../assets/logo.png">
 
     <el-row :gutter="2">
       <el-col :offset="1" :span="6">
