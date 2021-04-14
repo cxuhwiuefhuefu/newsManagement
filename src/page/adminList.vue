@@ -129,6 +129,14 @@ export default {
 .table_container {
   padding: 20px;
 }
+
+#test67878 {
+    padding: 1000px;
+}
+
+#cmh {
+    padding: 1000px;
+}
 </style>
 
 

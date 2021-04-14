@@ -23,6 +23,10 @@ const { Stats } = require('webpack')
 // var DashboardPlugin = require('webpack-dashboard/plugin');
 // var dashboard = new Dashboard();
 
+// CSS-tranking 
+// const CssTreeShakingPlugin = require("webpack-css-treeshaking-plugin")
+var PurifyCss = require('purifycss-webpack'); // 引入PurifyCss
+var glob = require('glob-all');// 引入glob-all
 
 
 const env = process.env.NODE_ENV === 'testing'
@@ -44,7 +48,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
   },
   plugins: [
-    //   new DashboardPlugin(dashboard.setData),
+      //   new DashboardPlugin(dashboard.setData),
       new BundleAnalyzerPlugin({
           analyzerMode: "server",
           analyzerHost: "127.0.0.1",
@@ -105,35 +109,9 @@ const webpackConfig = merge(baseWebpackConfig, {
           comments: false
         },
         warnings: false
-        // compress: {
-        //   warnings: false
-        // }
       }
     }),
 
-    // new ParallelUglifyPlugin({
-    //     uglifyJS: {
-    //         output: {
-    //             // 是否输出可读性较好的代码，即可保留空格和制表符，默认为输出，为了达到更好的压缩效果，可以设置为false
-    //             beautify: false,
-    //             // 是否保留代码中的注释，默认为保留，为了达到更好的压缩效果，可以设置为false
-    //             comments: false
-    //         },
-    //         // 是否在UglifyJS删除没有用到的代码时输出警告信息，默认为输出，可以设置为false关闭这些作用不大的警告
-    //         warning: false,
-                
-    //         compress: {
-    //             // 是否在UglifyJS删除没有用到的代码时输出警告信息，默认为输出，可以设置为false关闭这些作用不大的警告
-    //             warning: false,
-    //             // 是否删除代码中所有的console.log语句 默认为不删除 开启后 会删除所有的console语句
-    //             drop_console: true,
-    //             // 是否内嵌虽然已经定义了，但是只用到一次的变量 比如将var i = 1; y = x; 转换成y = 5;默认为不转换，为了到达更好的压缩效果，可以设置为false
-    //             collapse_vars: true,
-    //             // 是否提取出现了多次但是定义成变量去引用的静态值，比如将x = 'xxx'; y = 'xxx' 转换成var a = 'xxxx'; x = a; y = a;默认为不转换，为了达到更好的压缩效果，可以设置为false
-    //             reduce_vars: true
-    //         }
-    //     }
-    // }),
     new webpack.DllReferencePlugin({
         conetxt: __dirname,
         manifest: require('../main-manifest.json')
@@ -154,12 +132,8 @@ const webpackConfig = merge(baseWebpackConfig, {
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css'),
-      // Setting the following option to `false` will not extract CSS from codesplit chunks.
-      // Their CSS will instead be inserted dynamically with style-loader when the codesplit chunk has been loaded by webpack.
-      // It's currently set to `true` because we are seeing that sourcemaps are included in the codesplit bundle as well when it's `false`, 
-      // increasing file size: https://github.com/vuejs-templates/webpack/issues/1110
       allChunks: true,
-    }),
+    }),        
     // Compress extracted CSS. We are using this plugin so that possible
     // duplicated CSS from different components can be deduped.
     new OptimizeCSSPlugin({
@@ -190,6 +164,22 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.HashedModuleIdsPlugin(),
     // enable scope hoisting
     new webpack.optimize.ModuleConcatenationPlugin(),
+    
+    // 自动提取所有的node_module或者引用次数两次以上的模块
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor2',
+      minChunks (module, count) {
+        (module.context && module.context.indexOf('node_modules') !== -1) || count >= 2;
+      }
+    }),
+    // 按需加载的异步模块里的通用模块
+    new webpack.optimize.CommonsChunkPlugin({
+        name: ["main", "preview", "EditPage", "MinePage"],
+        async: "async-common",
+        minChunks: 2
+    }),
+
+
     // split vendor js into its own file
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
@@ -227,7 +217,15 @@ const webpackConfig = merge(baseWebpackConfig, {
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+
+    // 清楚无用的CSS代码
+    new PurifyCss({
+        paths: glob.sync([ // 传入多文件路径
+            path.join(__dirname, '../src/page/*.vue'),
+        ])
+    }),  
+
   ]
 })
 
